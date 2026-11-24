@@ -14,6 +14,31 @@ No third-party Python packages. No global installation required.
 
 ---
 
+## Update 11/23/26
+
+---
+
+## 🔄 What's New (v2 Update)
+
+The latest version introduces a **professional-grade mastering mixer** and significant **under-the-hood robustness improvements**, all while maintaining the zero-dependency, single-file philosophy.
+
+### 🎛️ New Mastering Mixer Features
+- **10-Band Graphic EQ**: ISO-standard frequencies (31 Hz – 16 kHz) with a ±12 dB range and octave Q. Includes handy one-click presets (Flat, Bass Boost, Vocal Clarity, Treble Boost, Rock, Podcast).
+- **Master Gain**: Precise volume adjustment from -24 dB to +12 dB.
+- **Advanced Normalization**: 
+  - **Peak Normalize**: Ensures the export peaks exactly at -0.1 dBFS (maximum volume without clipping).
+  - **EBU R128 Loudness Normalize**: Two-pass analysis and rendering to hit a broadcast-standard -14 LUFS target.
+- **Anti-Clip Limiter**: Automatically engaged when normalization is turned off, providing a -0.1 dB ceiling to catch unexpected transients.
+- **Live In-Browser Monitor**: Real-time Web Audio API level meter with a visual clip indicator, allowing you to hear and see the mixer chain applied *before* exporting.
+
+### ⚙️ Engine & Robustness Upgrades
+- **Smart Connection Pooling**: Replaced unbounded thread spawning with a fixed worker pool (`MAX_WORKERS=8`) and a hard in-flight connection cap (`16`). This prevents memory/thread exhaustion during connection floods.
+- **Graceful Client Disconnect Handling**: The server now actively detects if a client closes the browser tab mid-process. It immediately frees the concurrency slot and terminates the background FFmpeg process, preventing zombie processes and resource leaks.
+- **IPv6 Dual-Stack Support**: The server now binds to `::` by default, seamlessly serving both `127.0.0.1` and `::1` (IPv6 loopback), with a graceful fallback to IPv4 if the environment lacks IPv6 support.
+- **Bulletproof Multipart Parsing**: Replaced Python's standard `email.parser` with a custom, byte-exact RFC 7578/2046 boundary splitter. This guarantees binary-safe file uploads without any risk of the standard library mangling payloads.
+- **Sample Rate Preservation**: When using EBU R128 loudness normalization in WAV mode, the output sample rate is now explicitly pinned to the source file's sample rate. This prevents FFmpeg's `loudnorm` filter from unintentionally upsampling the output to 192 kHz.
+- **Extended Processing Timeout**: Increased the FFmpeg timeout limit to 600 seconds to comfortably accommodate the new two-pass measurement and rendering phases for longer files.
+
 ## Features
 
 - **WAV export** — Lossless. Preserves the source bit depth and sample rate when possible (16 / 24 / 32-bit PCM).
